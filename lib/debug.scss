@@ -1,0 +1,16 @@
+$debug: false;
+
+$debug-border-style: 1px dotted red;
+$debug-background-color: magenta;
+
+@if ($debug) {
+
+  section {
+  border: $debug-border-style;
+  }
+
+  .todo-list {
+    background-color: $debug-background-color;
+  }
+
+} //end of debug statement
