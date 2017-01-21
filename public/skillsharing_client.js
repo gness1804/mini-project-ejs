@@ -1,6 +1,6 @@
-const reportError = require('./helpers/report-error');
-const talkURL = require('./helpers/talk-url');
-const deleteTalk = require('./helpers/delete-talk');
+// const reportError = require('./helpers/report-error');
+// const talkURL = require('./helpers/talk-url');
+// const deleteTalk = require('./helpers/delete-talk');
 
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
@@ -38,6 +38,25 @@ request({
     }
   });
 
+//helper
+const reportError = (error) => {
+  if (error) {
+    document.getElementById('error-container').innerText = error.toString();
+  }
+};
+
+//helper
+const talkURL = (title) => {
+  return 'talks/' + encodeURIComponent(title);
+};
+
+//helper
+const deleteTalk = (title) => {
+  request({
+    pathname: talkURL(title),
+    method: 'DELETE',
+  }, reportError);
+};
 
 const displayTalks = (talks) => {
   talks.forEach((talk) => {
