@@ -28,3 +28,9 @@ request({
     waitForChanges();
   }
 });
+
+function reportError(error) {
+  if (error) {
+    document.getElementById('error-container').innerText = error.toString();
+  }
+}
