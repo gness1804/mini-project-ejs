@@ -1,4 +1,6 @@
 var lastServerTime = 0;
+var talkDiv = document.querySelector('#talks');
+var shownTalks = {};
 
 function request(options, callback) {
   var req = new XMLHttpRequest();
@@ -16,6 +18,12 @@ function request(options, callback) {
   req.send(options.body || null);
 }
 
+function reportError(error) {
+  if (error) {
+    document.getElementById('error-container').innerText = error.toString();
+  }
+}
+
 request({
   pathname: 'talks',
 }, function (error, response) {
@@ -29,8 +37,23 @@ request({
   }
 });
 
-function reportError(error) {
-  if (error) {
-    document.getElementById('error-container').innerText = error.toString();
-  }
+//same problem here with not sure whether line 56 is within the else block or not
+function displayTalks(talks) {
+  talks.forEach(function(talk){
+    var shown = shownTalks[talk.title];
+    if (talk.deleted) {
+      if (shown) {
+        talkDiv.removeChild(shown);
+        delete shownTalks[talk.title];
+      }
+    } else {
+      var node = drawTalk(talk);
+      if (shown) {
+        talkDiv.replaceChild(node, shown);
+      } else {
+        talkDiv.appendChild(node);
+      }
+      shownTalks[talk.title] = node;
+    }
+  });
 }
