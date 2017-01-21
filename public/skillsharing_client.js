@@ -100,3 +100,26 @@ function drawTalk(talk) {
   });
   return node;
 }
+
+function talkURL(title) {
+  return 'talks/' + encodeURIComponent(title);
+}
+
+function deleteTalk(title) {
+  request({
+    pathname: talkURL(title),
+    method: 'DELETE',
+  }, reportError);
+}
+
+function addComment(title, comment) {
+  var comment = {
+    author: nameField.value,
+    message: comment,
+  };
+  request({
+    pathname: talkURL(title) + '/comments',
+    body: JSON.stringify(comment),
+    method: 'POST',
+  }, reportError);
+}
