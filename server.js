@@ -1,45 +1,43 @@
-var http = require('http');
-var Router = require('./router');
-var ecstatic = require('ecstatic');
+const http = require('http');
+const Router = require('./router');
+const sendTalks = require('./helpers/send-talks');
+const ecstatic = require('ecstatic');
 
-var fileServer = ecstatic({
+const fileServer = ecstatic({
   root: './public',
 });
+const router = new Router();
 
-var router = new Router();
+let talks = Object.create(null);
+let waiting = [];
+let changes = [];
 
-var talks = {};
-
-var waiting = [];
-
-var changes = [];
-
-http.createServer(function (request, response) {
+http.createServer((request, response) => {
   if (!router.resolve(request, response)) {
     fileServer(request, response);
   }
 }).listen(8000);
 
-function respond(response, status, data, type) {
+const respond = (response, status, data, type) => {
   response.writeHead(status, {
     'Content-Type': type || 'text/plain',
   });
   response.end(data);
-}
+};
 
-function respondJSON(response, status, data) {
+const respondJSON = (response, status, data) => {
   respond(response, status, JSON.stringify(data), 'application/json');
-}
+};
 
-router.add('GET', /^\/talks\/([^\/]+)$/, function (request, response, title) {
+router.add('GET', /^\/talks\/([^\/]+)$/, (request, response, title) => {
   if (title in talks) {
     respondJSON(response, 200, talks[title]);
   } else {
-    respond(response, 404, 'Talk not found with title of' + title);
+    respond(response, 404, `No talk with title of ${title} found.`);
   }
 });
 
-router.add('DELETE', /^\/talks\/([^\/]+)$/, function (request, response, title) {
+router.add('DELETE', /^\/talks\/([^\/]+)$/, (request, response, title) => {
   if (title in talks) {
     delete talks[title];
     registerChange(title);
@@ -47,13 +45,14 @@ router.add('DELETE', /^\/talks\/([^\/]+)$/, function (request, response, title) 
   respond(response, 204, null);
 });
 
-function readStreamAsJSON(stream, callback) {
-  var data = '';
-  stream.on('data', function (chunk) {
+const readStreamAsJSON = (stream, callback) => {
+  let data = '';
+  stream.on('data', (chunk) => {
     data += chunk;
   });
-  stream.on('end', function () {
-    var result, error;
+  stream.on('end', () => {
+    let result;
+    let error;
     try {
       result = JSON.parse(data);
     } catch (e) {
@@ -61,20 +60,20 @@ function readStreamAsJSON(stream, callback) {
     }
     callback(error, result);
   });
-  stream.on('error', function (error) {
+  stream.on('error', (error) => {
     callback(error);
   });
-}
+};
 
-router.add('PUT', /^\/talks\/([^\/]+)$/, function (request, response, title) {
-  readStreamAsJSON(request, function (error, talk) {
+router.add('PUT', /^\/talks\/([^\/]+)$/, (request, response, title) => {
+  readStreamAsJSON(request, (error, talk) => {
     if (error) {
       respond(response, 400, error.toString());
     } else if (!talk || typeof talk.presenter !== 'string' || typeof talk.summary !== 'string') {
       respond(response, 400, 'Invalid data for talk.');
     } else {
       talks[title] = {
-        title: title,
+        title,
         presenter: talk.presenter,
         summary: talk.summary,
         comments: [],
@@ -85,8 +84,8 @@ router.add('PUT', /^\/talks\/([^\/]+)$/, function (request, response, title) {
   });
 });
 
-router.add('POST', /^\/talks\/([^\/]+)\/comments$/, function (request, response, title) {
-  readStreamAsJSON(request, function (error, comment) {
+router.add('POST', /^\/talks\/([^\/]+)\/comments$/, (request, response, title) => {
+  readStreamAsJSON(request, (error, comment) => {
     if (error) {
       respond(response, 404, error.toString());
     } else if (!comment || typeof comment.author !== 'string' || typeof comment.message !== 'string') {
@@ -96,17 +95,12 @@ router.add('POST', /^\/talks\/([^\/]+)\/comments$/, function (request, response,
       registerChange(title);
       respond(response, 204, null);
     } else {
-      respond(response, 404, 'Talk not found with title of ' + title);
+      respond(response, 404, `No talk with title of ${title} found.`);
     }
   });
 });
 
-function sendTalks(talks, response) {
-  respondJSON(response, 200, {
-    serverTime: Date.now(),
-    talks: talks,
-  });
-}
+//stopped
 
 //potential problem with for loop: are both statements below it meant to be inside of it?
 router.add('GET', /^\/talks$/, function (request, response) {
@@ -182,3 +176,5 @@ function getChangedTalks(since) {
   }
   return found;
 }
+
+module.exports = respondJSON;
