@@ -81,3 +81,22 @@ function instantiateTemplate(name, values) {
   var template = document.querySelector('#template .' + name);
   return instantiate(template);
 }
+
+function drawTalk(talk) {
+  var node = instantiateTemplate('talk', talk);
+  var comments = node.querySelector('.comments');
+  talk.comments.forEach(function (comment) {
+    comments.appendChild(instantiateTemplate('comment', comment));
+  });
+
+  node.querySelector('button.del').addEventListener('click', deleteTalk.bind(null, talk.title));
+
+  var form = node.querySelector('form');
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+    addComment(talk.title, form.elements.comment.value);
+    form.reset();
+  });
+  return node;
+}
