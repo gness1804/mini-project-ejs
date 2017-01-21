@@ -24,27 +24,29 @@ const request = (options, callback) => {
 
 request({
   pathname: 'talks',
-}, function (error, response) {
-  if (error) {
-    reportError(error);
-  } else {
-    response = JSON.parse(response);
-    displayTalks(response.talks);
-    lastServerTime = response.serverTime;
-    waitForChanges();
-  }
-});
+},
+  (error, response) => {
+    if (error) {
+      reportError(error);
+    } else {
+      response = JSON.parse(response);
+      displayTalks(response.talks);
+      lastServerTime = response.serverTime;
+      waitForChanges();
+    }
+  });
 
-function displayTalks(talks) {
-  talks.forEach(function (talk) {
-    var shown = shownTalks[talk.title];
+
+const displayTalks = (talks) => {
+  talks.forEach((talk) => {
+    let shown = shownTalks[talk.title];
     if (talk.deleted) {
       if (shown) {
         talkDiv.removeChild(shown);
         delete shownTalks[talk.title];
       }
     } else {
-      var node = drawTalk(talk);
+      let node = drawTalk(talk);
       if (shown)
         talkDiv.replaceChild(node, shown);
       else
@@ -52,7 +54,7 @@ function displayTalks(talks) {
       shownTalks[talk.title] = node;
     }
   });
-}
+};
 
 function instantiateTemplate(name, values) {
   function instantiateText(text) {
