@@ -57,3 +57,27 @@ function displayTalks(talks) {
     }
   });
 }
+
+function instantiateTemplate(name, values) {
+  function instantiateText(text) {
+    return text.replace(/\{\{(\w+)\}\}/g, function (_, name) {
+      return values[name];
+    });
+  }
+  function instantiate(node) {
+    if (node.nodeType === document.ELEMENT_NODE) {
+      var copy = node.cloneNode();
+      for (var i = 0; i < node.childNodes.length; i++) {
+        copy.appendChild(instantiate(node.childNodes[i]));
+      }
+      return copy;
+    } else if (node.nodeType === document.TEXT_NODE) {
+      return document.createTextNode(instantiateText(node.nodeValue));
+    } else {
+      return node;
+    }
+  }
+
+  var template = document.querySelector('#template .' + name);
+  return instantiate(template);
+}
