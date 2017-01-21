@@ -1,6 +1,6 @@
-const Router = () => {
+function Router() {
   this.routes = [];
-};
+}
 
 Router.prototype.add = function (method, url, handler) {
   this.routes.push({
