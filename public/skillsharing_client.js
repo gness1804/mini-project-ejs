@@ -1,6 +1,8 @@
 var lastServerTime = 0;
 var talkDiv = document.querySelector('#talks');
 var shownTalks = {};
+var nameField = document.querySelector('#name');
+var talkForm = document.querySelector('#newtalk');
 
 function request(options, callback) {
   var req = new XMLHttpRequest();
@@ -123,3 +125,21 @@ function addComment(title, comment) {
     method: 'POST',
   }, reportError);
 }
+
+nameField.value = localStorage.getItem('name') || '';
+nameField.addEventListener('change', function () {
+  localStorage.setItem('name', nameField.value);
+});
+
+talkForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+  request({
+    pathname: talkURL(talkForm.elements.title.value),
+    method: 'PUT',
+    body: JSON.stringify({
+      presenter: nameField.value,
+      summary: talkForm.elements.summary.value,
+    }),
+  }, reportError);
+  talkForm.reset();
+});
