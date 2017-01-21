@@ -101,10 +101,8 @@ const drawTalk = (talk) => {
   return node;
 };
 
-//stopped
-
-function addComment(title, comment) {
-  var comment = {
+const addComment = (title, comment) => {
+  let comment = {
     author: nameField.value,
     message: comment,
   };
@@ -112,15 +110,17 @@ function addComment(title, comment) {
     pathname: talkURL(title) + '/comments',
     body: JSON.stringify(comment),
     method: 'POST',
-  }, reportError);
-}
+  },
+  reportError);
+};
 
 nameField.value = localStorage.getItem('name') || '';
-nameField.addEventListener('change', function () {
+
+nameField.addEventListener('change', () => {
   localStorage.setItem('name', nameField.value);
 });
 
-talkForm.addEventListener('submit', function (event) {
+talkForm.addEventListener('submit', (event) => {
   event.preventDefault();
   request({
     pathname: talkURL(talkForm.elements.title.value),
@@ -133,10 +133,11 @@ talkForm.addEventListener('submit', function (event) {
   talkForm.reset();
 });
 
-function waitForChanges() {
+const waitForChanges = () => {
   request({
     pathname: 'talks?changesSince=' + lastServerTime,
-  }, function (error, response) {
+  },
+  (error, response) => {
     if (error) {
       setTimeout(waitForChanges, 2500);
       console.error(error.stack);
@@ -147,4 +148,4 @@ function waitForChanges() {
       waitForChanges();
     }
   });
-}
+};
