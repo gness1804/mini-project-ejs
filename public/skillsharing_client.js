@@ -1,3 +1,5 @@
+var lastServerTime = 0;
+
 function request(options, callback) {
   var req = new XMLHttpRequest();
   req.open(options.method || 'GET', options.pathname, true);
@@ -13,3 +15,16 @@ function request(options, callback) {
   });
   req.send(options.body || null);
 }
+
+request({
+  pathname: 'talks',
+}, function (error, response) {
+  if (error) {
+    reportError(error);
+  } else {
+    response = JSON.parse(response);
+    displayTalks(response.talks);
+    lastServerTime = response.serverTime;
+    waitForChanges();
+  }
+});
