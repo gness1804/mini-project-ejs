@@ -1,4 +1,6 @@
 import { reportError } from './helpers/report-error';
+import { talkURL } from './helpers/talk-url';
+import { deleteTalk } from './helpers/delete-talk';
 
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
@@ -6,7 +8,7 @@ let shownTalks = Object.create(null);
 const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
 
-const request = (options, callback) => {
+export const request = (options, callback) => {
   const req = new XMLHttpRequest();
   req.open(options.method || 'GET', options.pathname, true);
   req.addEventListener('load', () => {
@@ -74,42 +76,32 @@ const instantiateTemplate = (name, values) => {
     } else {
       return node;
     }
-  }
+  };
+
+  let template = document.querySelector('#template .' + name);
+  return instantiate(template);
 };
 
-  var template = document.querySelector('#template .' + name);
-  return instantiate(template);
-}
-
-function drawTalk(talk) {
-  var node = instantiateTemplate('talk', talk);
-  var comments = node.querySelector('.comments');
-  talk.comments.forEach(function (comment) {
+const drawTalk = (talk) => {
+  let node = instantiateTemplate('talk', talk);
+  let comments = node.querySelector('.comments');
+  talk.comments.forEach((comment) => {
     comments.appendChild(instantiateTemplate('comment', comment));
   });
 
   node.querySelector('button.del').addEventListener('click', deleteTalk.bind(null, talk.title));
 
-  var form = node.querySelector('form');
+  let form = node.querySelector('form');
 
-  form.addEventListener('submit', function (event) {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
     addComment(talk.title, form.elements.comment.value);
     form.reset();
   });
   return node;
-}
+};
 
-function talkURL(title) {
-  return 'talks/' + encodeURIComponent(title);
-}
-
-function deleteTalk(title) {
-  request({
-    pathname: talkURL(title),
-    method: 'DELETE',
-  }, reportError);
-}
+//stopped
 
 function addComment(title, comment) {
   var comment = {
