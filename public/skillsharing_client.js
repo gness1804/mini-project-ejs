@@ -2,7 +2,7 @@ import { reportError } from './helpers/report-error';
 
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
-let shownTalks = {};
+let shownTalks = Object.create(null);
 const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
 
@@ -56,16 +56,16 @@ const displayTalks = (talks) => {
   });
 };
 
-function instantiateTemplate(name, values) {
-  function instantiateText(text) {
-    return text.replace(/\{\{(\w+)\}\}/g, function (_, name) {
+const instantiateTemplate = (name, values) => {
+  const instantiateText = (text) => {
+    return text.replace(/\{\{(\w+)\}\}/g, (_, name) => {
       return values[name];
     });
   }
-  function instantiate(node) {
+  const instantiate = (node) => {
     if (node.nodeType === document.ELEMENT_NODE) {
-      var copy = node.cloneNode();
-      for (var i = 0; i < node.childNodes.length; i++) {
+      let copy = node.cloneNode();
+      for (let i = 0; i < node.childNodes.length; i++) {
         copy.appendChild(instantiate(node.childNodes[i]));
       }
       return copy;
@@ -75,6 +75,7 @@ function instantiateTemplate(name, values) {
       return node;
     }
   }
+};
 
   var template = document.querySelector('#template .' + name);
   return instantiate(template);
