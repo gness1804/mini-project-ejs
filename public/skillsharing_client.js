@@ -1,3 +1,5 @@
+import { reportError } from './helpers/report-error';
+
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
 let shownTalks = {};
@@ -19,12 +21,6 @@ const request = (options, callback) => {
   });
   req.send(options.body || null);
 };
-
-function reportError(error) {
-  if (error) {
-    document.getElementById('error-container').innerText = error.toString();
-  }
-}
 
 request({
   pathname: 'talks',
