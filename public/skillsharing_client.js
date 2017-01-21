@@ -1,24 +1,24 @@
-var lastServerTime = 0;
-var talkDiv = document.querySelector('#talks');
-var shownTalks = {};
-var nameField = document.querySelector('#name');
-var talkForm = document.querySelector('#newtalk');
+let lastServerTime = 0;
+const talkDiv = document.querySelector('#talks');
+let shownTalks = {};
+const nameField = document.querySelector('#name');
+const talkForm = document.querySelector('#newtalk');
 
-function request(options, callback) {
-  var req = new XMLHttpRequest();
+const request = (options, callback) => {
+  const req = new XMLHttpRequest();
   req.open(options.method || 'GET', options.pathname, true);
-  req.addEventListener('load', function () {
+  req.addEventListener('load', () => {
     if (req.status < 400) {
       callback(null, req.responseText);
     } else {
-      callback(new Error('Request failed: ' + req.statusText));
+      callback(new Error(`Request failed: ${req.statusText}`));
     }
   });
-  req.addEventListener('error', function () {
+  req.addEventListener('error', () => {
     callback(new Error('Network error.'));
   });
   req.send(options.body || null);
-}
+};
 
 function reportError(error) {
   if (error) {
