@@ -1,4 +1,4 @@
-export const Router = () => {
+const Router = () => {
   this.routes = [];
 };
 
@@ -24,3 +24,5 @@ Router.prototype.resolve = function (request, response) {
     return true;
   });
 };
+
+module.exports = Router;

@@ -1,6 +1,6 @@
-import { reportError } from './helpers/report-error';
-import { talkURL } from './helpers/talk-url';
-import { deleteTalk } from './helpers/delete-talk';
+const reportError = require('./helpers/report-error');
+const talkURL = require('./helpers/talk-url');
+const deleteTalk = require('./helpers/delete-talk');
 
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
@@ -8,7 +8,7 @@ let shownTalks = Object.create(null);
 const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
 
-export const request = (options, callback) => {
+const request = (options, callback) => {
   const req = new XMLHttpRequest();
   req.open(options.method || 'GET', options.pathname, true);
   req.addEventListener('load', () => {
@@ -149,3 +149,5 @@ const waitForChanges = () => {
     }
   });
 };
+
+module.exports = request;

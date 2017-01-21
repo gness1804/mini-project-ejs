@@ -1,10 +1,12 @@
-import { request } from '../skillsharing_client';
-import { talkURL } from './talk-url';
-import { reportError } from './report-error';
+const request = require('../skillsharing_client');
+const reportError = require('./report-error');
+const talkURL = require('./talk-url');
 
-export const deleteTalk = (title) => {
+const deleteTalk = (title) => {
   request({
     pathname: talkURL(title),
     method: 'DELETE',
   }, reportError);
 };
+
+module.exports = deleteTalk;
