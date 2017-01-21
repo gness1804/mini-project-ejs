@@ -39,9 +39,8 @@ request({
   }
 });
 
-//same problem here with not sure whether line 56 is within the else block or not
 function displayTalks(talks) {
-  talks.forEach(function(talk){
+  talks.forEach(function (talk) {
     var shown = shownTalks[talk.title];
     if (talk.deleted) {
       if (shown) {
@@ -50,11 +49,10 @@ function displayTalks(talks) {
       }
     } else {
       var node = drawTalk(talk);
-      if (shown) {
+      if (shown)
         talkDiv.replaceChild(node, shown);
-      } else {
+      else
         talkDiv.appendChild(node);
-      }
       shownTalks[talk.title] = node;
     }
   });
