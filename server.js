@@ -1,8 +1,7 @@
-//my code
-
 const http = require('http');
 const Router = require('./router');
 const ecstatic = require('ecstatic');
+const sendTalks = require('./helpers/send-talks');
 
 const fileServer = ecstatic({
   root: './public',
@@ -100,12 +99,12 @@ router.add('POST', /^\/talks\/([^\/]+)\/comments$/, (request, response, title) =
 });
 
 //helper
-const sendTalks = (talks, response) => {
-  respondJSON(response, 200, {
-    serverTime: Date.now(),
-    talks: talks,
-  });
-};
+// const sendTalks = (talks, response) => {
+//   respondJSON(response, 200, {
+//     serverTime: Date.now(),
+//     talks: talks,
+//   });
+// };
 
 router.add('GET', /^\/talks$/, (request, response) => {
   let query = require('url').parse(request.url, true).query;
@@ -182,3 +181,5 @@ const getChangedTalks = (since) => {
   }
   return found;
 };
+
+module.exports = respondJSON;
