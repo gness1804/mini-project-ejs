@@ -1,0 +1,23 @@
+.main-container {
+  text-align: center;
+}
+
+.talk, .new-talk-div  {
+  border: 1px solid black;
+  margin: 20px auto;
+  max-width: 60vw;
+  padding: 20px 0;
+}
+
+.new-talk-div input {
+  margin: 10px 0;
+}
+
+.new-talk-div button {
+  display: block;
+  margin: 0 auto;
+}
+
+.italic {
+  font-style: italic;
+}
