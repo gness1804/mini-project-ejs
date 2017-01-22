@@ -1,3 +1,5 @@
+//my code
+
 const http = require('http');
 const Router = require('./router');
 const ecstatic = require('ecstatic');
@@ -5,11 +7,8 @@ const ecstatic = require('ecstatic');
 const fileServer = ecstatic({
   root: './public',
 });
-let router = new Router();
 
-let talks = Object.create(null);
-let waiting = [];
-let changes = [];
+let router = new Router();
 
 http.createServer((request, response) => {
   if (!router.resolve(request, response)) {
@@ -27,6 +26,8 @@ const respond = (response, status, data, type) => {
 const respondJSON = (response, status, data) => {
   respond(response, status, JSON.stringify(data), 'application/json');
 };
+
+let talks = Object.create(null);
 
 router.add('GET', /^\/talks\/([^\/]+)$/, (request, response, title) => {
   if (title in talks) {
@@ -50,8 +51,7 @@ const readStreamAsJSON = (stream, callback) => {
     data += chunk;
   });
   stream.on('end', () => {
-    let result;
-    let error;
+    let result, error;
     try {
       result = JSON.parse(data);
     } catch (e) {
@@ -72,7 +72,7 @@ router.add('PUT', /^\/talks\/([^\/]+)$/, (request, response, title) => {
       respond(response, 400, 'Invalid data for talk.');
     } else {
       talks[title] = {
-        title,
+        title: title,
         presenter: talk.presenter,
         summary: talk.summary,
         comments: [],
@@ -103,13 +103,13 @@ router.add('POST', /^\/talks\/([^\/]+)\/comments$/, (request, response, title) =
 const sendTalks = (talks, response) => {
   respondJSON(response, 200, {
     serverTime: Date.now(),
-    talks,
+    talks: talks,
   });
 };
 
 router.add('GET', /^\/talks$/, (request, response) => {
   let query = require('url').parse(request.url, true).query;
-  if (query.changesSince === null) {
+  if (query.changesSince == null) {
     var list = [];
     for (var title in talks)
       list.push(talks[title]);
@@ -128,10 +128,12 @@ router.add('GET', /^\/talks$/, (request, response) => {
   }
 });
 
+let waiting = [];
+
 const waitForChanges = (since, response) => {
   var waiter = {
-    since,
-    response,
+    since: since,
+    response: response,
   };
   waiting.push(waiter);
   setTimeout(() => {
@@ -143,9 +145,11 @@ const waitForChanges = (since, response) => {
   }, 90 * 1000);
 };
 
+let changes = [];
+
 const registerChange = (title) => {
   changes.push({
-    title,
+    title: title,
     time: Date.now(),
   });
   waiting.forEach((waiter) => {

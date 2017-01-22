@@ -5,7 +5,7 @@ const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
 
 const request = (options, callback) => {
-  const req = new XMLHttpRequest();
+  let req = new XMLHttpRequest();
   req.open(options.method || 'GET', options.pathname, true);
   req.addEventListener('load', () => {
     if (req.status < 400) {
@@ -21,18 +21,18 @@ const request = (options, callback) => {
 };
 
 request({
-  pathname: 'talks',
+  pathname: 'talks'
 },
   (error, response) => {
-    if (error) {
-      reportError(error);
-    } else {
-      response = JSON.parse(response);
-      displayTalks(response.talks);
-      lastServerTime = response.serverTime;
-      waitForChanges();
-    }
-  });
+  if (error) {
+    reportError(error);
+  } else {
+    response = JSON.parse(response);
+    displayTalks(response.talks);
+    lastServerTime = response.serverTime;
+    waitForChanges();
+  }
+});
 
 //helper
 const reportError = (error) => {
