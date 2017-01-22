@@ -1,12 +1,11 @@
 const http = require('http');
 const Router = require('./router');
-// const sendTalks = require('./helpers/send-talks');
 const ecstatic = require('ecstatic');
 
 const fileServer = ecstatic({
   root: './public',
 });
-const router = new Router();
+let router = new Router();
 
 let talks = Object.create(null);
 let waiting = [];
@@ -65,14 +64,6 @@ const readStreamAsJSON = (stream, callback) => {
   });
 };
 
-//helper
-const sendTalks = (talks, response) => {
-  respondJSON(response, 200, {
-    serverTime: Date.now(),
-    talks,
-  });
-};
-
 router.add('PUT', /^\/talks\/([^\/]+)$/, (request, response, title) => {
   readStreamAsJSON(request, (error, talk) => {
     if (error) {
@@ -108,19 +99,27 @@ router.add('POST', /^\/talks\/([^\/]+)\/comments$/, (request, response, title) =
   });
 });
 
+//helper
+const sendTalks = (talks, response) => {
+  respondJSON(response, 200, {
+    serverTime: Date.now(),
+    talks,
+  });
+};
+
 router.add('GET', /^\/talks$/, (request, response) => {
   let query = require('url').parse(request.url, true).query;
   if (query.changesSince === null) {
-    let list = [];
-    for (let title in talks)
+    var list = [];
+    for (var title in talks)
       list.push(talks[title]);
     sendTalks(list, response);
   } else {
-    let since = Number(query.changesSince);
+    var since = Number(query.changesSince);
     if (isNaN(since)) {
       respond(response, 400, 'Invalid parameter');
     } else {
-      let changed = getChangedTalks(since);
+      var changed = getChangedTalks(since);
       if (changed.length > 0)
         sendTalks(changed, response);
       else
@@ -130,13 +129,13 @@ router.add('GET', /^\/talks$/, (request, response) => {
 });
 
 const waitForChanges = (since, response) => {
-  let waiter = {
+  var waiter = {
     since,
     response,
   };
   waiting.push(waiter);
   setTimeout(() => {
-    let found = waiting.indexOf(waiter);
+    var found = waiting.indexOf(waiter);
     if (found > -1) {
       waiting.splice(found, 1);
       sendTalks([], response);
@@ -179,5 +178,3 @@ const getChangedTalks = (since) => {
   }
   return found;
 };
-
-module.exports = respondJSON;

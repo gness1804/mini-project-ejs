@@ -41,19 +41,6 @@ const reportError = (error) => {
   }
 };
 
-//helper
-const talkURL = (title) => {
-  return 'talks/' + encodeURIComponent(title);
-};
-
-//helper
-const deleteTalk = (title) => {
-  request({
-    pathname: talkURL(title),
-    method: 'DELETE',
-  }, reportError);
-};
-
 const displayTalks = (talks) => {
   talks.forEach((talk) => {
     let shown = shownTalks[talk.title];
@@ -100,15 +87,16 @@ const instantiateTemplate = (name, values) => {
 const drawTalk = (talk) => {
   let node = instantiateTemplate('talk', talk);
   let comments = node.querySelector('.comments');
-  talk.comments.forEach((comment) => {
-    comments.appendChild(instantiateTemplate('comment', comment));
+  talk.comments.forEach(function(comment) {
+    comments.appendChild(
+      instantiateTemplate('comment', comment));
   });
 
-  node.querySelector('button.del').addEventListener('click', deleteTalk.bind(null, talk.title));
+  node.querySelector('button.del').addEventListener(
+    'click', deleteTalk.bind(null, talk.title));
 
   let form = node.querySelector('form');
-
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', function(event) {
     event.preventDefault();
     addComment(talk.title, form.elements.comment.value);
     form.reset();
@@ -116,18 +104,30 @@ const drawTalk = (talk) => {
   return node;
 };
 
+//helper
+const talkURL = (title) => {
+  return 'talks/' + encodeURIComponent(title);
+};
+
+//helper
+const deleteTalk = (title) => {
+  request({
+    pathname: talkURL(title),
+    method: 'DELETE',
+  }, reportError);
+};
+
 const addComment = (title, comment) => {
-  let comment1 = {
+  var comment = {
     author: nameField.value,
-    message: comment,
+    message: comment
   };
   request({
     pathname: talkURL(title) + '/comments',
-    body: JSON.stringify(comment1),
-    method: 'POST',
-  },
-  reportError);
-};
+    body: JSON.stringify(comment),
+    method: 'POST'},
+    reportError);
+}
 
 nameField.value = localStorage.getItem('name') || '';
 
@@ -135,7 +135,7 @@ nameField.addEventListener('change', () => {
   localStorage.setItem('name', nameField.value);
 });
 
-talkForm.addEventListener('submit', (event) => {
+talkForm.addEventListener('submit', function (event) {
   event.preventDefault();
   request({
     pathname: talkURL(talkForm.elements.title.value),
