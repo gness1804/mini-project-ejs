@@ -1,6 +1,6 @@
 const http = require('http');
 const Router = require('./router');
-const sendTalks = require('./helpers/send-talks');
+// const sendTalks = require('./helpers/send-talks');
 const ecstatic = require('ecstatic');
 
 const fileServer = ecstatic({
@@ -62,6 +62,14 @@ const readStreamAsJSON = (stream, callback) => {
   });
   stream.on('error', (error) => {
     callback(error);
+  });
+};
+
+//helper
+const sendTalks = (talks, response) => {
+  respondJSON(response, 200, {
+    serverTime: Date.now(),
+    talks,
   });
 };
 

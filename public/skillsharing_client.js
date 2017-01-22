@@ -1,7 +1,3 @@
-// const reportError = require('./helpers/report-error');
-// const talkURL = require('./helpers/talk-url');
-// const deleteTalk = require('./helpers/delete-talk');
-
 let lastServerTime = 0;
 const talkDiv = document.querySelector('#talks');
 let shownTalks = Object.create(null);
@@ -121,13 +117,13 @@ const drawTalk = (talk) => {
 };
 
 const addComment = (title, comment) => {
-  let comment = {
+  let comment1 = {
     author: nameField.value,
     message: comment,
   };
   request({
     pathname: talkURL(title) + '/comments',
-    body: JSON.stringify(comment),
+    body: JSON.stringify(comment1),
     method: 'POST',
   },
   reportError);
@@ -168,5 +164,3 @@ const waitForChanges = () => {
     }
   });
 };
-
-module.exports = request;
