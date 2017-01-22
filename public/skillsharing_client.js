@@ -3,6 +3,7 @@ const talkDiv = document.querySelector('#talks');
 let shownTalks = Object.create(null);
 const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
+// const talkURL = require('./helpers/talk-url');
 
 const request = (options, callback) => {
   let req = new XMLHttpRequest();
@@ -105,9 +106,9 @@ const drawTalk = (talk) => {
 };
 
 //helper
-const talkURL = (title) => {
-  return 'talks/' + encodeURIComponent(title);
-};
+// const talkURL = (title) => {
+//   return 'talks/' + encodeURIComponent(title);
+// };
 
 //helper
 const deleteTalk = (title) => {
