@@ -3,7 +3,6 @@ const talkDiv = document.querySelector('#talks');
 let shownTalks = Object.create(null);
 const nameField = document.querySelector('#name');
 const talkForm = document.querySelector('#newtalk');
-// const talkURL = require('./helpers/talk-url');
 
 const request = (options, callback) => {
   let req = new XMLHttpRequest();
@@ -34,13 +33,6 @@ request({
     waitForChanges();
   }
 });
-
-//helper
-const reportError = (error) => {
-  if (error) {
-    document.getElementById('error-container').innerText = error.toString();
-  }
-};
 
 const displayTalks = (talks) => {
   talks.forEach((talk) => {
@@ -97,7 +89,7 @@ const drawTalk = (talk) => {
     'click', deleteTalk.bind(null, talk.title));
 
   let form = node.querySelector('form');
-  form.addEventListener('submit', function(event) {
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
     addComment(talk.title, form.elements.comment.value);
     form.reset();
@@ -105,26 +97,13 @@ const drawTalk = (talk) => {
   return node;
 };
 
-//helper
-// const talkURL = (title) => {
-//   return 'talks/' + encodeURIComponent(title);
-// };
-
-//helper
-const deleteTalk = (title) => {
-  request({
-    pathname: talkURL(title),
-    method: 'DELETE',
-  }, reportError);
-};
-
 const addComment = (title, comment) => {
   var comment = {
     author: nameField.value,
-    message: comment
+    message: comment,
   };
   request({
-    pathname: talkURL(title) + '/comments',
+    pathname: `${talkURL(title)}/comments`,
     body: JSON.stringify(comment),
     method: 'POST'},
     reportError);
@@ -136,7 +115,7 @@ nameField.addEventListener('change', () => {
   localStorage.setItem('name', nameField.value);
 });
 
-talkForm.addEventListener('submit', function (event) {
+talkForm.addEventListener('submit', (event) => {
   event.preventDefault();
   request({
     pathname: talkURL(talkForm.elements.title.value),
@@ -151,7 +130,7 @@ talkForm.addEventListener('submit', function (event) {
 
 const waitForChanges = () => {
   request({
-    pathname: 'talks?changesSince=' + lastServerTime,
+    pathname: `talks?changesSince=${lastServerTime}`,
   },
   (error, response) => {
     if (error) {
